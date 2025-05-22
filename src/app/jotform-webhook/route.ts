@@ -1,15 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+import { PrismaClient, Prisma } from '@/generated/prisma/client'; 
 
 type RawRequestData = Record<string, unknown>;
 
-type JotFormSubmission = {
-	formID: string;
-	submissionID: string;
-	formTitle: string;
-	submissionDate: string; 
-	ip: string;
-	formData: RawRequestData;
-};
+const prisma = new PrismaClient(); 
 
 export async function POST(request: NextRequest) {
 	try {
@@ -47,30 +41,50 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		const submission: JotFormSubmission = {
-			formID: formIDValue,
-			submissionID: submissionIDValue,
-			formTitle: typeof formTitleValue === 'string' ? formTitleValue : "Bilinmeyen Form",
-			submissionDate: new Date().toISOString(),
-			ip: typeof ipValue === 'string' ? ipValue : (request.headers.get("x-forwarded-for") || "unknown"),
-			formData: parsedRawRequest
+		// Veriyi Prisma modeline uygun hale getir
+		const submissionDataForPrisma = {
+			formId: formIDValue,
+			submissionId: submissionIDValue,
+			formTitle: typeof formTitleValue === 'string' ? formTitleValue : undefined, // Opsiyonel alan için undefined
+			submissionDate: new Date(), // Veya parsedRawRequest'ten gelen bir tarih alanı varsa onu kullan
+			ipAddress: typeof ipValue === 'string' ? ipValue : undefined,
+			formDataJson: parsedRawRequest as Prisma.InputJsonValue // Prisma'nın Json tipi için cast
 		};
 
-		console.log("JotForm verisi (multipart) alındı ve işlendi:", submission);
+		// Veritabanına kaydet
+		const savedSubmission = await prisma.jotFormSubmission.create({
+			data: submissionDataForPrisma,
+		});
 
+		console.log("JotForm verisi başarıyla veritabanına kaydedildi:", savedSubmission);
 
 		return NextResponse.json({
 			success: true,
-			message: "Form verisi başarıyla alındı",
-			data: { id: submission.submissionID }
+			message: "Form verisi başarıyla alındı ve kaydedildi",
+			data: { databaseId: savedSubmission.id, submissionId: savedSubmission.submissionId }
 		});
 
 	} catch (error: unknown) {
-		console.error("JotForm webhook genel hatası:", error);
-		const errorMessage: string = error instanceof Error ? error.message : "Bilinmeyen bir sunucu hatası oluştu";
+		console.error("JotForm webhook veya veritabanı hatası:", error);
+		let errorMessage: string = "Bilinmeyen bir sunucu hatası oluştu";
+		let statusCode: number = 500;
+
+		if (error instanceof Prisma.PrismaClientKnownRequestError) {
+			// Prisma'ya özgü bilinen hatalar (örn: unique constraint ihlali)
+			if (error.code === 'P2002') { // Benzersiz alan ihlali (örn: submissionId zaten var)
+				errorMessage = "Bu gönderim ID'si zaten kaydedilmiş.";
+				statusCode = 409; // Conflict
+				console.warn(`Tekrarlayan gönderim denemesi: ${ (error.meta?.target as string[] | undefined)?.join(', ') }`);
+			} else {
+				errorMessage = `Veritabanı hatası: ${error.message}`;
+			}
+		} else if (error instanceof Error) {
+			errorMessage = error.message;
+		}
+
 		return NextResponse.json(
-			{ success: false, message: "Sunucu hatası oluştu", error: errorMessage },
-			{ status: 500 }
+			{ success: false, message: errorMessage, errorDetails: String(error) },
+			{ status: statusCode }
 		);
 	}
 }

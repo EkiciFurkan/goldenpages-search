@@ -41,17 +41,15 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		// Veriyi Prisma modeline uygun hale getir
 		const submissionDataForPrisma = {
 			formId: formIDValue,
 			submissionId: submissionIDValue,
-			formTitle: typeof formTitleValue === 'string' ? formTitleValue : undefined, // Opsiyonel alan için undefined
-			submissionDate: new Date(), // Veya parsedRawRequest'ten gelen bir tarih alanı varsa onu kullan
+			formTitle: typeof formTitleValue === 'string' ? formTitleValue : undefined,
+			submissionDate: new Date(),
 			ipAddress: typeof ipValue === 'string' ? ipValue : undefined,
-			formDataJson: parsedRawRequest as Prisma.InputJsonValue // Prisma'nın Json tipi için cast
+			formDataJson: parsedRawRequest as Prisma.InputJsonValue 
 		};
 
-		// Veritabanına kaydet
 		const savedSubmission = await prisma.jotFormSubmission.create({
 			data: submissionDataForPrisma,
 		});
@@ -70,10 +68,9 @@ export async function POST(request: NextRequest) {
 		let statusCode: number = 500;
 
 		if (error instanceof Prisma.PrismaClientKnownRequestError) {
-			// Prisma'ya özgü bilinen hatalar (örn: unique constraint ihlali)
-			if (error.code === 'P2002') { // Benzersiz alan ihlali (örn: submissionId zaten var)
+			if (error.code === 'P2002') {
 				errorMessage = "Bu gönderim ID'si zaten kaydedilmiş.";
-				statusCode = 409; // Conflict
+				statusCode = 409;
 				console.warn(`Tekrarlayan gönderim denemesi: ${ (error.meta?.target as string[] | undefined)?.join(', ') }`);
 			} else {
 				errorMessage = `Veritabanı hatası: ${error.message}`;

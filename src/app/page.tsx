@@ -7,6 +7,33 @@ import {getData as getCountryData} from 'country-list';
 
 type FormDataType = Record<string, unknown>;
 
+function slugify(text: string): string {
+	if (!text || text === 'N/A') {
+		return '';
+	}
+	const turkishMap: Record<string, string> = {
+		'ç': 'c', 'Ç': 'C',
+		'ğ': 'g', 'Ğ': 'G',
+		'ı': 'i', 'İ': 'I',
+		'ö': 'o', 'Ö': 'O',
+		'ş': 's', 'Ş': 'S',
+		'ü': 'u', 'Ü': 'U'
+	};
+	let slug = text.toString().toLowerCase().trim();
+	if (!slug) {
+		return '';
+	}
+
+	slug = slug.replace(/[çÇğĞıİöÖşŞüÜ]/g, (match) => turkishMap[match] || match);
+
+	slug = slug.replace(/\s+/g, '-')
+		.replace(/[^\w-]+/g, '')
+		.replace(/--+/g, '-')
+		.replace(/^-+/, '')
+		.replace(/-+$/, '');
+	return slug;
+}
+
 function getFormDataValue(formData: FormDataType | null, key: string, defaultValue: string = 'N/A'): string {
 	if (formData && typeof formData === 'object' && key in formData) {
 		const value = formData[key];
@@ -23,13 +50,11 @@ function getFormDataValue(formData: FormDataType | null, key: string, defaultVal
 			const phoneData = value as { area?: string; phone?: string; country?: string };
 			if (phoneData.country && phoneData.area && phoneData.phone) {
 				let countryCode = phoneData.country;
-				// Ülke kodunu formatla: "0090" -> "90", "0X" -> "X"
 				if (countryCode.startsWith("00")) {
-					countryCode = countryCode.substring(2); // "0090" -> "90"
+					countryCode = countryCode.substring(2);
 				} else if (countryCode.startsWith("0")) {
-					countryCode = countryCode.substring(1); // "090" -> "90" (Eğer böyle bir durum varsa)
+					countryCode = countryCode.substring(1);
 				}
-				// Zaten + içeriyorsa tekrar ekleme, sadece + sonrasını al
 				if (countryCode.startsWith('+')) {
 					countryCode = countryCode.substring(1);
 				}
@@ -44,7 +69,6 @@ function getFormDataValue(formData: FormDataType | null, key: string, defaultVal
 function getProfilePictureUrl(formData: FormDataType | null, key: string): string | null {
 	if (formData && typeof formData === 'object' && key in formData) {
 		const widgetDataString = formData[key];
-		// Check if widgetDataString is a non-empty string before attempting to parse
 		if (typeof widgetDataString === 'string' && widgetDataString.trim() !== '') {
 			try {
 				const parsedData = JSON.parse(widgetDataString);
@@ -64,22 +88,17 @@ function getProfilePictureUrl(formData: FormDataType | null, key: string): strin
 					return baseUrl + imageUrlPath;
 				}
 			} catch (e) {
-				// Log the problematic string and the error for better debugging
 				console.error("Profil resmi JSON parse hatası. Sorunlu string:", widgetDataString, "Hata:", e);
 				return null;
 			}
-		} else if (typeof widgetDataString === 'string' && widgetDataString.trim() === '') {
-			// Optionally log if the string is empty, if that's unexpected for a profile picture field
-			// console.warn(`Profil resmi alanı '${key}' için widgetDataString boş.`);
 		}
 	}
 	return null;
 }
 
-// Helper function to format social media URLs
 function formatSocialUrl(platform: string, value: string): string {
 	if (!value || value.trim() === '') {
-		return '#'
+		return '#';
 	}
 
 	if (value.startsWith('http://') || value.startsWith('https://')) {
@@ -106,7 +125,6 @@ function formatSocialUrl(platform: string, value: string): string {
 	}
 }
 
-
 export default function Home() {
 	const [submissions, setSubmissions] = useState<JotFormSubmission[]>([]);
 	const [error, setError] = useState<string | null>(null);
@@ -115,7 +133,6 @@ export default function Home() {
 	const [selectedCountry, setSelectedCountry] = useState<{ value: string; label: string } | null>(null);
 	const [filterSector, setFilterSector] = useState<string>('');
 	const [filterCity, setFilterCity] = useState<string>('');
-
 
 	const countryOptions = useMemo(() => {
 		const countries = getCountryData();
@@ -189,7 +206,8 @@ export default function Home() {
 	if (loading) {
 		return (
 			<main
-				className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 text-gray-700 p-4 sm:p-6 md:p-8 flex flex-col items-center justify-center">
+				className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 text-gray-700 p-4 sm:p-6 md:p-8 flex flex-col items-center justify-center"
+			>
 				<h1 className="text-2xl font-semibold text-gray-600">Şirketler Yükleniyor</h1>
 			</main>
 		);
@@ -198,7 +216,8 @@ export default function Home() {
 	if (error) {
 		return (
 			<main
-				className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 text-gray-700 p-4 sm:p-6 md:p-8 flex flex-col items-center justify-center text-center">
+				className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 text-gray-700 p-4 sm:p-6 md:p-8 flex flex-col items-center justify-center text-center"
+			>
 				<h1 className="text-3xl font-bold text-red-600 mb-2">Bir Sorun Oluştu</h1>
 				<p className="text-gray-700 text-lg">{error}</p>
 			</main>
@@ -286,7 +305,9 @@ export default function Home() {
 				) : filteredSubmissions.length === 0 && anyFilterActive ? (
 					<div className="text-center py-12">
 						<p className="text-xl text-gray-500">
-							Burada İlk Tıklayın İlk Siz <a href="https://www.gelbesayfa.com/firma-ekle/" className="font-bold" target="_blank" rel="noopener noreferrer">Kayıt Olun !</a>
+							Burada İlk Tıklayın İlk Siz <a href="https://www.gelbesayfa.com/firma-ekle/"
+														   className="font-bold" target="_blank"
+														   rel="noopener noreferrer">Kayıt Olun !</a>
 						</p>
 					</div>
 				) : (
@@ -304,12 +325,21 @@ export default function Home() {
 								const email = getFormDataValue(formData, 'q16_email16');
 								const phoneNumber = getFormDataValue(formData, 'q105_telephone105');
 
-
 								const instagramHandle = getFormDataValue(formData, 'q31_instagramAdresi', '');
 								const tiktokHandle = getFormDataValue(formData, 'q69_tiktok', '');
 								const twitterHandle = getFormDataValue(formData, 'q70_twitter70', '');
 								const linkedinHandle = getFormDataValue(formData, 'q32_linkedinAdresi', '');
 								const facebookHandle = getFormDataValue(formData, 'q33_facebookAdresi', '');
+
+								const websiteFieldContent = getFormDataValue(formData, 'q48_website', '');
+
+								let goldenPagesLinkToShow: string | null = null;
+								if (websiteFieldContent && websiteFieldContent !== 'N/A' && websiteFieldContent.trim() !== '') {
+									const firmaAdiSlug = slugify(firmaAdi);
+									if (firmaAdiSlug) {
+										goldenPagesLinkToShow = `https://goldenpages.io/${firmaAdiSlug}`;
+									}
+								}
 
 								const hasSocialMedia = (instagramHandle && instagramHandle !== 'N/A' && instagramHandle.trim() !== '') ||
 									(tiktokHandle && tiktokHandle !== 'N/A' && tiktokHandle.trim() !== '') ||
@@ -321,7 +351,6 @@ export default function Home() {
 
 								const isNewlyAdded = !anyFilterActive && index < 3;
 
-
 								return (
 									<div
 										key={submission.id}
@@ -329,7 +358,8 @@ export default function Home() {
 									>
 										{isNewlyAdded && (
 											<div
-												className="absolute top-0 right-0 bg-[#FCA300] text-white text-xs font-semibold py-1 px-3 rounded-bl-lg z-10">
+												className="absolute top-0 right-0 bg-[#FCA300] text-white text-xs font-semibold py-1 px-3 rounded-bl-lg z-10"
+											>
 												YENİ
 											</div>
 										)}
@@ -342,24 +372,28 @@ export default function Home() {
 														className="w-16 h-16 rounded-lg object-cover border-2 border-gray-200 group-hover:border-[#FCA300] transition-colors"
 														onError={(e) => {
 															(e.target as HTMLImageElement).style.display = 'none';
-															// Optionally, you could set a fallback image here or log the error
-															// (e.target as HTMLImageElement).src = '/path/to/fallback-image.png';
 														}}
 													/>
 												) : (
 													<div
-														className="w-16 h-16 rounded-lg bg-gray-100 flex items-center justify-center text-[#FCA300] group-hover:border-[#FCA300] border-2 border-gray-200 transition-colors">
+														className="w-16 h-16 rounded-lg bg-gray-100 flex items-center justify-center text-[#FCA300] group-hover:border-[#FCA300] border-2 border-gray-200 transition-colors"
+													>
 														<svg xmlns="http://www.w3.org/2000/svg" fill="none"
 															 viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"
-															 className="w-8 h-8">
+															 className="w-8 h-8"
+														>
 															<path strokeLinecap="round" strokeLinejoin="round"
-																  d="M2.25 21h19.5m-18-18v18A2.25 2.25 0 0 0 4.5 21h15a2.25 2.25 0 0 0 2.25-2.25V5.25A2.25 2.25 0 0 0 19.5 3H4.5A2.25 2.25 0 0 0 2.25 5.25v.897M7.5 4.5M7.5 12a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Zm0 0v3.375c0 .621.504 1.125 1.125 1.125h2.25c.621 0 1.125-.504 1.125-1.125V12Zm-1.125-4.5h4.5m-4.5 0h4.5m-4.5 0V3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V4.5m0 0v3.375c0 .621-.504 1.125-1.125 1.125h-2.25A1.125 1.125 0 0 1 7.5 7.875V4.5m0 0h4.5M4.5 12h15M4.5 15h15M4.5 18h15"/>
+																  d="M2.25 21h19.5m-18-18v18A2.25 2.25 0 0 0 4.5 21h15a2.25 2.25 0 0 0 2.25-2.25V5.25A2.25 2.25 0 0 0 19.5 3H4.5A2.25 2.25 0 0 0 2.25 5.25v.897M7.5 4.5M7.5 12a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Zm0 0v3.375c0 .621.504 1.125 1.125 1.125h2.25c.621 0 1.125-.504 1.125-1.125V12Zm-1.125-4.5h4.5m-4.5 0h4.5m-4.5 0V3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V4.5m0 0v3.375c0 .621-.504 1.125-1.125 1.125h-2.25A1.125 1.125 0 0 1 7.5 7.875V4.5m0 0h4.5M4.5 12h15M4.5 15h15M4.5 18h15"
+															/>
 														</svg>
 													</div>
 												)}
 												<div className="flex-1 min-w-0">
                                         <span
-											className="block text-xs font-medium text-[#FCA300] uppercase tracking-wider">Firma Adı</span>
+											className="block text-xs font-medium text-[#FCA300] uppercase tracking-wider"
+										>
+                                           Firma Adı
+                                        </span>
 													<p className="text-xl font-semibold text-gray-900 truncate group-hover:text-orange-600 transition-colors">
 														{firmaAdi}
 													</p>
@@ -369,77 +403,119 @@ export default function Home() {
 											<ul className="space-y-3 mb-auto">
 												<li>
                                         <span
-											className="block text-xs font-medium text-gray-500 uppercase tracking-wider">İş Sektörü</span>
+											className="block text-xs font-medium text-gray-500 uppercase tracking-wider"
+										>
+                                           İş Sektörü
+                                        </span>
 													<p className="text-gray-700 truncate">
 														{getFormDataValue(formData, 'q45_businessSector')}
 													</p>
 												</li>
 												<li>
                                         <span
-											className="block text-xs font-medium text-gray-500 uppercase tracking-wider">Şehir / Ülke</span>
+											className="block text-xs font-medium text-gray-500 uppercase tracking-wider"
+										>
+                                           Şehir / Ülke
+                                        </span>
 													<p className="text-gray-700 truncate">
 														{getFormDataValue(formData, 'q91_city', '') || 'Belirtilmemiş'} / {getFormDataValue(formData, 'q21_schreibenSie21')}
 													</p>
 												</li>
 												{phoneNumber !== 'N/A' && (
 													<li>
-                                             <span
-												 className="block text-xs font-medium text-gray-500 uppercase tracking-wider">Telefon</span>
-														<a href={`tel:${phoneNumber.replace(/\s|\(|\)/g, '')}`}
-														   className="text-gray-700 hover:text-orange-500 transition-colors truncate block">
+                                           <span
+											   className="block text-xs font-medium text-gray-500 uppercase tracking-wider"
+										   >
+                                              Telefon
+                                           </span>
+														<a
+															href={`tel:${phoneNumber.replace(/\s|\(|\)/g, '')}`}
+															className="text-gray-700 hover:text-orange-500 transition-colors truncate block"
+														>
 															{phoneNumber}
 														</a>
 													</li>
 												)}
 												<li>
                                         <span
-											className="block text-xs font-medium text-gray-500 uppercase tracking-wider">E-posta</span>
-													<a href={`mailto:${email}`}
-													   className="text-gray-700 hover:text-orange-500 transition-colors truncate block">
+											className="block text-xs font-medium text-gray-500 uppercase tracking-wider"
+										>
+                                           E-posta
+                                        </span>
+													<a
+														href={`mailto:${email}`}
+														className="text-gray-700 hover:text-orange-500 transition-colors truncate block"
+													>
 														{email}
 													</a>
 												</li>
+												{goldenPagesLinkToShow && (
+													<li>
+                                           <span
+											   className="block text-xs font-medium text-gray-500 uppercase tracking-wider"
+										   >
+                                              Website
+                                           </span>
+														<a
+															href={goldenPagesLinkToShow}
+															target="_blank" rel="noopener noreferrer"
+															className="text-gray-700 hover:text-orange-500 transition-colors truncate block"
+														>
+															{goldenPagesLinkToShow}
+														</a>
+													</li>
+												)}
 											</ul>
 
 											{hasSocialMedia && (
 												<div className="pt-4 border-t border-gray-200 mt-4">
 													<div className="flex items-center space-x-3 justify-center">
 														{instagramHandle && instagramHandle !== 'N/A' && instagramHandle.trim() !== '' && (
-															<a href={formatSocialUrl('instagram', instagramHandle)}
-															   target="_blank" rel="noopener noreferrer"
-															   title="İnstagram Profili">
+															<a
+																href={formatSocialUrl('instagram', instagramHandle)}
+																target="_blank" rel="noopener noreferrer"
+																title="İnstagram Profili"
+															>
 																<img src="/instagram.png" alt="İnstagram İkonu"
 																	 className="w-6 h-6 hover:opacity-75 transition-opacity"/>
 															</a>
 														)}
 														{tiktokHandle && tiktokHandle !== 'N/A' && tiktokHandle.trim() !== '' && (
-															<a href={formatSocialUrl('tiktok', tiktokHandle)}
-															   target="_blank" rel="noopener noreferrer"
-															   title="TikTok Profili">
+															<a
+																href={formatSocialUrl('tiktok', tiktokHandle)}
+																target="_blank" rel="noopener noreferrer"
+																title="TikTok Profili"
+															>
 																<img src="/tiktok.png" alt="TikTok İkonu"
 																	 className="w-6 h-6 hover:opacity-75 transition-opacity"/>
 															</a>
 														)}
 														{twitterHandle && twitterHandle !== 'N/A' && twitterHandle.trim() !== '' && (
-															<a href={formatSocialUrl('twitter', twitterHandle)}
-															   target="_blank" rel="noopener noreferrer"
-															   title="Twitter Profili">
+															<a
+																href={formatSocialUrl('twitter', twitterHandle)}
+																target="_blank" rel="noopener noreferrer"
+																title="Twitter Profili"
+															>
 																<img src="/twitter.png" alt="Twitter İkonu"
 																	 className="w-6 h-6 hover:opacity-75 transition-opacity"/>
 															</a>
 														)}
 														{linkedinHandle && linkedinHandle !== 'N/A' && linkedinHandle.trim() !== '' && (
-															<a href={formatSocialUrl('linkedin', linkedinHandle)}
-															   target="_blank" rel="noopener noreferrer"
-															   title="LinkedIn Profili">
+															<a
+																href={formatSocialUrl('linkedin', linkedinHandle)}
+																target="_blank" rel="noopener noreferrer"
+																title="LinkedIn Profili"
+															>
 																<img src="/linkedin.png" alt="LinkedIn İkonu"
 																	 className="w-6 h-6 hover:opacity-75 transition-opacity"/>
 															</a>
 														)}
 														{facebookHandle && facebookHandle !== 'N/A' && facebookHandle.trim() !== '' && (
-															<a href={formatSocialUrl('facebook', facebookHandle)}
-															   target="_blank" rel="noopener noreferrer"
-															   title="Facebook Profili">
+															<a
+																href={formatSocialUrl('facebook', facebookHandle)}
+																target="_blank" rel="noopener noreferrer"
+																title="Facebook Profili"
+															>
 																<img src="/facebook.png" alt="Facebook İkonu"
 																	 className="w-6 h-6 hover:opacity-75 transition-opacity"/>
 															</a>
@@ -448,19 +524,19 @@ export default function Home() {
 												</div>
 											)}
 
-											{/* Google Maps Iframe Section */}
 											{googleMapHtml && googleMapHtml !== 'N/A' && googleMapHtml.trim().startsWith('<iframe') && (
 												<div className="mt-4 pt-4 border-t border-gray-200">
 													<div
 														style={{maxHeight: '300px', overflowY: 'hidden', width: '100%'}}
-														className="rounded-md overflow-hidden border border-gray-200">
+														className="rounded-md overflow-hidden border border-gray-200"
+													>
 														<div dangerouslySetInnerHTML={{__html: googleMapHtml}}/>
 													</div>
 												</div>
 											)}
 										</div>
 									</div>
-								)
+								);
 							})}
 						</div>
 					</>

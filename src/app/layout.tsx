@@ -17,11 +17,11 @@ export const metadata: Metadata = {
 	description: "Şirket Arama Sayfası",
 	icons: {
 		icon: [
-			{ url: '/img.png' },
-			{ url: '/img.png', type: 'image/png' },
+			{ url: 'favicon.jpeg' },
+			{ url: 'favicon.jpeg', type: 'image/png' },
 		],
 		apple: [
-			{ url: '/img.png' },
+			{ url: 'favicon.jpeg' },
 		],
 	}
 };
@@ -34,7 +34,7 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 		<head>
-			<link rel="icon" href="/img.png" sizes="any"/>
+			<link rel="icon" href="/favicon.jpeg" sizes="any"/>
 		</head>
 		<body
 			className={`${geistSans.variable} ${geistMono.variable} antialiased`}

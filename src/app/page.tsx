@@ -5,7 +5,7 @@ import { JotFormSubmission } from '@/generated/prisma/client';
 import { getData as getCountryData } from 'country-list';
 import dynamic from 'next/dynamic'; 
 
-import LocationComponent from './location/page';
+import LocationComponent from '@/components/LocationComponent';
 import JotformChatbotEmbed from "@/components/JotformChatbotEmbed"; 
 
 const Select = dynamic(() => import('react-select'), { ssr: false });

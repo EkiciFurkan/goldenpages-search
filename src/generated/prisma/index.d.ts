@@ -888,6 +888,7 @@ export namespace Prisma {
     ipAddress: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    deletedAt: Date | null
   }
 
   export type JotFormSubmissionMaxAggregateOutputType = {
@@ -899,6 +900,7 @@ export namespace Prisma {
     ipAddress: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    deletedAt: Date | null
   }
 
   export type JotFormSubmissionCountAggregateOutputType = {
@@ -911,6 +913,7 @@ export namespace Prisma {
     formDataJson: number
     createdAt: number
     updatedAt: number
+    deletedAt: number
     _all: number
   }
 
@@ -924,6 +927,7 @@ export namespace Prisma {
     ipAddress?: true
     createdAt?: true
     updatedAt?: true
+    deletedAt?: true
   }
 
   export type JotFormSubmissionMaxAggregateInputType = {
@@ -935,6 +939,7 @@ export namespace Prisma {
     ipAddress?: true
     createdAt?: true
     updatedAt?: true
+    deletedAt?: true
   }
 
   export type JotFormSubmissionCountAggregateInputType = {
@@ -947,6 +952,7 @@ export namespace Prisma {
     formDataJson?: true
     createdAt?: true
     updatedAt?: true
+    deletedAt?: true
     _all?: true
   }
 
@@ -1032,6 +1038,7 @@ export namespace Prisma {
     formDataJson: JsonValue
     createdAt: Date
     updatedAt: Date
+    deletedAt: Date | null
     _count: JotFormSubmissionCountAggregateOutputType | null
     _min: JotFormSubmissionMinAggregateOutputType | null
     _max: JotFormSubmissionMaxAggregateOutputType | null
@@ -1061,6 +1068,7 @@ export namespace Prisma {
     formDataJson?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    deletedAt?: boolean
   }, ExtArgs["result"]["jotFormSubmission"]>
 
   export type JotFormSubmissionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1073,6 +1081,7 @@ export namespace Prisma {
     formDataJson?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    deletedAt?: boolean
   }, ExtArgs["result"]["jotFormSubmission"]>
 
   export type JotFormSubmissionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1085,6 +1094,7 @@ export namespace Prisma {
     formDataJson?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    deletedAt?: boolean
   }, ExtArgs["result"]["jotFormSubmission"]>
 
   export type JotFormSubmissionSelectScalar = {
@@ -1097,9 +1107,10 @@ export namespace Prisma {
     formDataJson?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    deletedAt?: boolean
   }
 
-  export type JotFormSubmissionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "formId" | "submissionId" | "formTitle" | "submissionDate" | "ipAddress" | "formDataJson" | "createdAt" | "updatedAt", ExtArgs["result"]["jotFormSubmission"]>
+  export type JotFormSubmissionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "formId" | "submissionId" | "formTitle" | "submissionDate" | "ipAddress" | "formDataJson" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["jotFormSubmission"]>
 
   export type $JotFormSubmissionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "JotFormSubmission"
@@ -1114,6 +1125,7 @@ export namespace Prisma {
       formDataJson: Prisma.JsonValue
       createdAt: Date
       updatedAt: Date
+      deletedAt: Date | null
     }, ExtArgs["result"]["jotFormSubmission"]>
     composites: {}
   }
@@ -1546,6 +1558,7 @@ export namespace Prisma {
     readonly formDataJson: FieldRef<"JotFormSubmission", 'Json'>
     readonly createdAt: FieldRef<"JotFormSubmission", 'DateTime'>
     readonly updatedAt: FieldRef<"JotFormSubmission", 'DateTime'>
+    readonly deletedAt: FieldRef<"JotFormSubmission", 'DateTime'>
   }
     
 
@@ -1935,7 +1948,8 @@ export namespace Prisma {
     ipAddress: 'ipAddress',
     formDataJson: 'formDataJson',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    deletedAt: 'deletedAt'
   };
 
   export type JotFormSubmissionScalarFieldEnum = (typeof JotFormSubmissionScalarFieldEnum)[keyof typeof JotFormSubmissionScalarFieldEnum]
@@ -2058,6 +2072,7 @@ export namespace Prisma {
     formDataJson?: JsonFilter<"JotFormSubmission">
     createdAt?: DateTimeFilter<"JotFormSubmission"> | Date | string
     updatedAt?: DateTimeFilter<"JotFormSubmission"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"JotFormSubmission"> | Date | string | null
   }
 
   export type JotFormSubmissionOrderByWithRelationInput = {
@@ -2070,6 +2085,7 @@ export namespace Prisma {
     formDataJson?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
   }
 
   export type JotFormSubmissionWhereUniqueInput = Prisma.AtLeast<{
@@ -2085,6 +2101,7 @@ export namespace Prisma {
     formDataJson?: JsonFilter<"JotFormSubmission">
     createdAt?: DateTimeFilter<"JotFormSubmission"> | Date | string
     updatedAt?: DateTimeFilter<"JotFormSubmission"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"JotFormSubmission"> | Date | string | null
   }, "id" | "submissionId">
 
   export type JotFormSubmissionOrderByWithAggregationInput = {
@@ -2097,6 +2114,7 @@ export namespace Prisma {
     formDataJson?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
     _count?: JotFormSubmissionCountOrderByAggregateInput
     _max?: JotFormSubmissionMaxOrderByAggregateInput
     _min?: JotFormSubmissionMinOrderByAggregateInput
@@ -2115,6 +2133,7 @@ export namespace Prisma {
     formDataJson?: JsonWithAggregatesFilter<"JotFormSubmission">
     createdAt?: DateTimeWithAggregatesFilter<"JotFormSubmission"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"JotFormSubmission"> | Date | string
+    deletedAt?: DateTimeNullableWithAggregatesFilter<"JotFormSubmission"> | Date | string | null
   }
 
   export type JotFormSubmissionCreateInput = {
@@ -2127,6 +2146,7 @@ export namespace Prisma {
     formDataJson: JsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
+    deletedAt?: Date | string | null
   }
 
   export type JotFormSubmissionUncheckedCreateInput = {
@@ -2139,6 +2159,7 @@ export namespace Prisma {
     formDataJson: JsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
+    deletedAt?: Date | string | null
   }
 
   export type JotFormSubmissionUpdateInput = {
@@ -2151,6 +2172,7 @@ export namespace Prisma {
     formDataJson?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type JotFormSubmissionUncheckedUpdateInput = {
@@ -2163,6 +2185,7 @@ export namespace Prisma {
     formDataJson?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type JotFormSubmissionCreateManyInput = {
@@ -2175,6 +2198,7 @@ export namespace Prisma {
     formDataJson: JsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
+    deletedAt?: Date | string | null
   }
 
   export type JotFormSubmissionUpdateManyMutationInput = {
@@ -2187,6 +2211,7 @@ export namespace Prisma {
     formDataJson?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type JotFormSubmissionUncheckedUpdateManyInput = {
@@ -2199,6 +2224,7 @@ export namespace Prisma {
     formDataJson?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -2265,6 +2291,17 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -2280,6 +2317,7 @@ export namespace Prisma {
     formDataJson?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    deletedAt?: SortOrder
   }
 
   export type JotFormSubmissionMaxOrderByAggregateInput = {
@@ -2291,6 +2329,7 @@ export namespace Prisma {
     ipAddress?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    deletedAt?: SortOrder
   }
 
   export type JotFormSubmissionMinOrderByAggregateInput = {
@@ -2302,6 +2341,7 @@ export namespace Prisma {
     ipAddress?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    deletedAt?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -2380,6 +2420,20 @@ export namespace Prisma {
     _max?: NestedJsonFilter<$PrismaModel>
   }
 
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
@@ -2390,6 +2444,10 @@ export namespace Prisma {
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -2429,6 +2487,17 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
@@ -2522,6 +2591,20 @@ export namespace Prisma {
     gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
 

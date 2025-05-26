@@ -15,15 +15,17 @@ datasource db {
 }
 
 model JotFormSubmission {
-  id             String   @id @default(cuid())
+  id             String    @id @default(cuid())
   formId         String
-  submissionId   String   @unique
+  submissionId   String    @unique
   formTitle      String?
   submissionDate DateTime
   ipAddress      String?
   formDataJson   Json
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
 
   @@index([formId])
+  @@index([deletedAt])
 }

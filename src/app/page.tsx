@@ -170,7 +170,6 @@ export default function Home() {
 			try {
 				const response = await fetch('/api/submissions');
 				if (!response.ok) {
-// setError(`Veri çekme hatası: ${response.status}`); // Optionally set specific error
 					return;
 				}
 				const data: JotFormSubmission[] = await response.json();
@@ -523,15 +522,12 @@ ${filterSector === sector
 										const googleMapHtml = getFormDataValue(formData, 'q103_googleMap');
 										const isNewlyAdded = !anyFilterActive && index < 3;
 
-// --- MODIFICATION START ---
-// 1. Always attempt to create the goldenpages.io link using firmaAdi
 										const firmaAdiSlug = slugify(firmaAdi);
 										let goldenPagesLinkToShow: string | null = null;
 										if (firmaAdiSlug) {
 											goldenPagesLinkToShow = `https://goldenpages.io/${firmaAdiSlug}`;
 										}
 
-// 2. Prepare the actual website URL from websiteFieldContent (q48_website) for the globe icon and fallback
 										let actualExternalWebsiteUrl: string | null = null;
 										if (websiteFieldContent && websiteFieldContent !== 'N/A' && websiteFieldContent.trim() !== '') {
 											if (websiteFieldContent.startsWith('http://') || websiteFieldContent.startsWith('https://')) {
@@ -540,7 +536,6 @@ ${filterSector === sector
 												actualExternalWebsiteUrl = `https://${websiteFieldContent}`;
 											}
 										}
-// --- MODIFICATION END ---
 
 										const hasSocialMedia = [instagramHandle, tiktokHandle, twitterHandle, linkedinHandle, facebookHandle].some(handle => handle && handle !== 'N/A' && handle.trim() !== '');
 
@@ -619,7 +614,6 @@ ${filterSector === sector
 														<div className="pt-4 border-t border-gray-200 mt-4">
 															<div className="flex items-center space-x-3 justify-center">
 
-																{/* --- MODIFICATION FOR GLOBE ICON --- */}
 																{actualExternalWebsiteUrl && (
 																	<div>
 																		<a

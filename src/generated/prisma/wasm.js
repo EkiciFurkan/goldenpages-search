@@ -129,7 +129,8 @@ exports.Prisma.JotFormSubmissionScalarFieldEnum = {
   ipAddress: 'ipAddress',
   formDataJson: 'formDataJson',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
 };
 
 exports.Prisma.SortOrder = {

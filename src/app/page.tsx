@@ -218,9 +218,25 @@ export default function Home() {
 		const city = getFormDataValue(formData, 'q91_city', '').toLowerCase();
 
 		const nameFilterPassed = filterText.trim() ? firmaAdi.includes(filterText.trim().toLowerCase()) : true;
-		const countryFilterPassed = selectedCountry?.value ? submissionCountryName === selectedCountry.label.toLowerCase() && submissionCountryName !== 'n/a' : true;
+		
+		let countryFilterPassed = true; 
+
+		if (selectedCountry?.value) { 
+			if (submissionCountryName === 'n/a') {
+				countryFilterPassed = false;
+			} else {
+				const selectedLabelLower = selectedCountry.label.toLowerCase();
+				if (selectedLabelLower === 'türkiye') {
+					countryFilterPassed = (submissionCountryName === 'türkiye' || submissionCountryName === 'turkey');
+				} else {
+					countryFilterPassed = submissionCountryName === selectedLabelLower;
+				}
+			}
+		}
+
 		const sectorFilterPassed = filterSector.trim() ? businessSector.includes(filterSector.trim().toLowerCase()) : true;
 		const cityFilterPassed = filterCity.trim() ? city.includes(filterCity.trim().toLowerCase()) : true;
+
 		return nameFilterPassed && countryFilterPassed && sectorFilterPassed && cityFilterPassed;
 	});
 
@@ -239,7 +255,6 @@ export default function Home() {
 				setSelectedCountry(foundCountryOption);
 			} else {
 				console.warn(`Konum servisinden gelen "${countryNameFromApi}" ülkesi seçeneklerde bulunamadı.`);
-// setSelectedCountry(countryOptions[0]); // "Tüm Ülkeler" olarak ayarla veya null
 			}
 		}
 	};
@@ -262,27 +277,27 @@ export default function Home() {
 		<div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
 			<aside
 				className={`
-fixed z-30
-transition-all duration-500 ease-out transform
-${isSidebarVisible ? 'opacity-100' : 'opacity-0'}
-bottom-0 left-0 w-full h-auto max-h-[75px]
-bg-slate-100 shadow-[0_-4px_10px_-1px_rgba(0,0,0,0.12)]
-p-2 border-t border-slate-200 
-flex items-center flex-col
-${isSidebarVisible ? 'translate-y-0' : 'translate-y-full'}
-md:top-0 md:bottom-auto md:left-0 md:h-screen ${SIDEBAR_DESKTOP_WIDTH_CLASS}
-md:bg-slate-50 md:shadow-lg md:p-4 md:pt-6 md:border-r md:border-t-0
-md:max-h-none md:overflow-y-auto md:translate-y-0
-${isSidebarVisible ? 'md:translate-x-0' : 'md:-translate-x-full'}
-`}
+					fixed z-30
+					transition-all duration-500 ease-out transform
+					${isSidebarVisible ? 'opacity-100' : 'opacity-0'}
+					bottom-0 left-0 w-full h-auto max-h-[75px]
+					bg-slate-100 shadow-[0_-4px_10px_-1px_rgba(0,0,0,0.12)]
+					p-2 border-t border-slate-200 
+					flex items-center flex-col
+					${isSidebarVisible ? 'translate-y-0' : 'translate-y-full'}
+					md:top-0 md:bottom-auto md:left-0 md:h-screen ${SIDEBAR_DESKTOP_WIDTH_CLASS}
+					md:bg-slate-50 md:shadow-lg md:p-4 md:pt-6 md:border-r md:border-t-0
+					md:max-h-none md:overflow-y-auto md:translate-y-0
+					${isSidebarVisible ? 'md:translate-x-0' : 'md:-translate-x-full'}
+					`}
 			>
 				<h3 className="hidden md:block text-xl font-semibold text-gray-800 mb-4 px-2">Popüler Aramalar</h3>
 				<nav
 					className="w-full h-full overflow-x-auto md:overflow-x-hidden md:overflow-y-auto custom-scrollbar-thin">
 					<ul className="flex flex-row items-center space-x-2 h-full md:flex-col md:items-stretch md:space-x-0 md:space-y-1.5 md:h-auto">
 						<li className={`
-flex-shrink-0 md:flex-shrink-1 transition-all duration-300 ease-out
-${areSectorButtonsAnimating
+								flex-shrink-0 md:flex-shrink-1 transition-all duration-300 ease-out
+								${areSectorButtonsAnimating
 							? 'opacity-100 translate-x-0 md:translate-y-0'
 							: 'opacity-0 translate-x-3 md:translate-x-0 md:translate-y-3'
 						}`}
@@ -291,9 +306,9 @@ ${areSectorButtonsAnimating
 							<button
 								onClick={() => setFilterSector('')}
 								className={`h-full md:h-auto w-auto md:w-full text-center px-3 py-2 rounded-lg text-xs font-medium 
-transition-all duration-150 ease-in-out whitespace-nowrap
-md:text-left md:text-sm md:whitespace-normal
-${filterSector === ''
+										transition-all duration-150 ease-in-out whitespace-nowrap
+										md:text-left md:text-sm md:whitespace-normal
+										${filterSector === ''
 									? 'bg-[#FCA300] text-white shadow-sm'
 									: 'text-gray-600 hover:bg-slate-200 active:bg-slate-300'}`}
 							>

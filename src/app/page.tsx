@@ -1,16 +1,15 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import { JotFormSubmission } from '@/generated/prisma/client'; 
-import { getData as getCountryData } from 'country-list';
-import dynamic from 'next/dynamic'; 
+import {useState, useEffect, useMemo} from 'react';
+import {JotFormSubmission} from '@/generated/prisma/client';
+import {getData as getCountryData} from 'country-list';
+import dynamic from 'next/dynamic';
 
 import LocationComponent from '@/components/LocationComponent';
-import JotformChatbotEmbed from "@/components/JotformChatbotEmbed"; 
+import JotformChatbotEmbed from "@/components/JotformChatbotEmbed";
 
-const Select = dynamic(() => import('react-select'), { ssr: false });
+const Select = dynamic(() => import('react-select'), {ssr: false});
 
-// Tipler
 type FormDataType = Record<string, unknown>;
 
 interface AddressInfoForHome {
@@ -20,7 +19,6 @@ interface AddressInfoForHome {
 	fullAddress?: string;
 }
 
-// Yardımcı Fonksiyonlar (Dosya içinde veya ayrı bir utils dosyasından import edilebilir)
 function slugify(text: string): string {
 	if (!text || text === 'N/A') {
 		return '';
@@ -141,7 +139,7 @@ export default function Home() {
 	const [isSidebarVisible, setIsSidebarVisible] = useState(false);
 	const [areSectorButtonsAnimating, setAreSectorButtonsAnimating] = useState(false);
 
-	// Kenar çubuğu animasyonları için useEffect
+// Kenar çubuğu animasyonları için useEffect
 	useEffect(() => {
 		let buttonsTimerId: NodeJS.Timeout;
 		const mainTimerId = setTimeout(() => {
@@ -159,7 +157,7 @@ export default function Home() {
 		};
 	}, []);
 
-	// Ülke seçeneklerini oluştur
+// Ülke seçeneklerini oluştur
 	const countryOptions = useMemo(() => {
 		const countries = getCountryData();
 		const options = countries.map(country => ({value: country.code, label: country.name,}));
@@ -172,6 +170,7 @@ export default function Home() {
 			try {
 				const response = await fetch('/api/submissions');
 				if (!response.ok) {
+// setError(`Veri çekme hatası: ${response.status}`); // Optionally set specific error
 					return;
 				}
 				const data: JotFormSubmission[] = await response.json();
@@ -187,7 +186,7 @@ export default function Home() {
 					if (isNaN(dateB)) {
 						return -1
 					}
-					return dateB - dateA; 
+					return dateB - dateA;
 				});
 				setSubmissions(sortedData);
 			} catch (e) {
@@ -197,6 +196,7 @@ export default function Home() {
 				setLoading(false);
 			}
 		}
+
 		fetchSubmissions();
 	}, []);
 
@@ -239,7 +239,7 @@ export default function Home() {
 				setSelectedCountry(foundCountryOption);
 			} else {
 				console.warn(`Konum servisinden gelen "${countryNameFromApi}" ülkesi seçeneklerde bulunamadı.`);
-				// setSelectedCountry(countryOptions[0]); // "Tüm Ülkeler" olarak ayarla veya null
+// setSelectedCountry(countryOptions[0]); // "Tüm Ülkeler" olarak ayarla veya null
 			}
 		}
 	};
@@ -262,37 +262,38 @@ export default function Home() {
 		<div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
 			<aside
 				className={`
-                fixed z-30
-                transition-all duration-500 ease-out transform
-                ${isSidebarVisible ? 'opacity-100' : 'opacity-0'}
-                bottom-0 left-0 w-full h-auto max-h-[75px]
-                bg-slate-100 shadow-[0_-4px_10px_-1px_rgba(0,0,0,0.12)]
-                p-2 border-t border-slate-200 
-                flex items-center flex-col
-                ${isSidebarVisible ? 'translate-y-0' : 'translate-y-full'}
-                md:top-0 md:bottom-auto md:left-0 md:h-screen ${SIDEBAR_DESKTOP_WIDTH_CLASS}
-                md:bg-slate-50 md:shadow-lg md:p-4 md:pt-6 md:border-r md:border-t-0
-                md:max-h-none md:overflow-y-auto md:translate-y-0
-                ${isSidebarVisible ? 'md:translate-x-0' : 'md:-translate-x-full'}
-             `}
+fixed z-30
+transition-all duration-500 ease-out transform
+${isSidebarVisible ? 'opacity-100' : 'opacity-0'}
+bottom-0 left-0 w-full h-auto max-h-[75px]
+bg-slate-100 shadow-[0_-4px_10px_-1px_rgba(0,0,0,0.12)]
+p-2 border-t border-slate-200 
+flex items-center flex-col
+${isSidebarVisible ? 'translate-y-0' : 'translate-y-full'}
+md:top-0 md:bottom-auto md:left-0 md:h-screen ${SIDEBAR_DESKTOP_WIDTH_CLASS}
+md:bg-slate-50 md:shadow-lg md:p-4 md:pt-6 md:border-r md:border-t-0
+md:max-h-none md:overflow-y-auto md:translate-y-0
+${isSidebarVisible ? 'md:translate-x-0' : 'md:-translate-x-full'}
+`}
 			>
 				<h3 className="hidden md:block text-xl font-semibold text-gray-800 mb-4 px-2">Popüler Aramalar</h3>
-				<nav className="w-full h-full overflow-x-auto md:overflow-x-hidden md:overflow-y-auto custom-scrollbar-thin">
+				<nav
+					className="w-full h-full overflow-x-auto md:overflow-x-hidden md:overflow-y-auto custom-scrollbar-thin">
 					<ul className="flex flex-row items-center space-x-2 h-full md:flex-col md:items-stretch md:space-x-0 md:space-y-1.5 md:h-auto">
 						<li className={`
-                        flex-shrink-0 md:flex-shrink-1 transition-all duration-300 ease-out
-                        ${areSectorButtonsAnimating
+flex-shrink-0 md:flex-shrink-1 transition-all duration-300 ease-out
+${areSectorButtonsAnimating
 							? 'opacity-100 translate-x-0 md:translate-y-0'
 							: 'opacity-0 translate-x-3 md:translate-x-0 md:translate-y-3'
 						}`}
-							style={{ transitionDelay: areSectorButtonsAnimating ? `0ms` : '0ms' }}
+							style={{transitionDelay: areSectorButtonsAnimating ? `0ms` : '0ms'}}
 						>
 							<button
 								onClick={() => setFilterSector('')}
 								className={`h-full md:h-auto w-auto md:w-full text-center px-3 py-2 rounded-lg text-xs font-medium 
-                                     transition-all duration-150 ease-in-out whitespace-nowrap
-                                     md:text-left md:text-sm md:whitespace-normal
-                                     ${filterSector === ''
+transition-all duration-150 ease-in-out whitespace-nowrap
+md:text-left md:text-sm md:whitespace-normal
+${filterSector === ''
 									? 'bg-[#FCA300] text-white shadow-sm'
 									: 'text-gray-600 hover:bg-slate-200 active:bg-slate-300'}`}
 							>
@@ -301,19 +302,19 @@ export default function Home() {
 						</li>
 						{uniqueSectors.map((sector, idx) => (
 							<li key={idx} className={`
-                            flex-shrink-0 md:flex-shrink-1 transition-all duration-300 ease-out
-                            ${areSectorButtonsAnimating
+flex-shrink-0 md:flex-shrink-1 transition-all duration-300 ease-out
+${areSectorButtonsAnimating
 								? 'opacity-100 translate-x-0 md:translate-y-0'
 								: 'opacity-0 translate-x-3 md:translate-x-0 md:translate-y-3'
 							}`}
-								style={{ transitionDelay: areSectorButtonsAnimating ? `${(idx + 1) * 75}ms` : '0ms' }}
+								style={{transitionDelay: areSectorButtonsAnimating ? `${(idx + 1) * 75}ms` : '0ms'}}
 							>
 								<button
 									onClick={() => setFilterSector(sector)}
 									className={`h-full md:h-auto w-auto md:w-full text-center px-3 py-2 rounded-lg text-xs font-medium 
-                                        transition-all duration-150 ease-in-out truncate
-                                        md:text-left md:text-sm 
-                                        ${filterSector === sector
+transition-all duration-150 ease-in-out truncate
+md:text-left md:text-sm 
+${filterSector === sector
 										? 'bg-[#FCA300] text-white shadow-sm'
 										: 'text-gray-600 hover:bg-slate-200 active:bg-slate-300'}`}
 									title={sector}
@@ -348,7 +349,7 @@ export default function Home() {
 								showInternalMessages={false}
 								buttonClassName="h-[50px] w-auto px-3 flex items-center justify-center text-gray-600 border border-gray-300 bg-white rounded-lg shadow-sm hover:bg-gray-50 focus:ring-2 focus:ring-[#FCA300] focus:border-[#FCA300] outline-none transition duration-150 ease-in-out"
 							/>
-							
+
 							<Select
 								instanceId="country-filter-select"
 								options={countryOptions}
@@ -412,7 +413,7 @@ export default function Home() {
 								)}
 							</div>
 
-						
+
 							<div className="relative w-full sm:w-auto sm:min-w-[200px] flex-grow">
 								<input
 									type="text"
@@ -437,7 +438,6 @@ export default function Home() {
 								)}
 							</div>
 
-							
 
 							<div className="relative w-full sm:w-auto sm:min-w-[200px] flex-grow">
 								<input
@@ -463,11 +463,11 @@ export default function Home() {
 								)}
 							</div>
 
-						
+
 						</div>
 
-						<JotformChatbotEmbed />
-						
+						<JotformChatbotEmbed/>
+
 
 						{loading ? (
 							<div className="text-center py-12">
@@ -505,16 +505,29 @@ export default function Home() {
 										const linkedinHandle = getFormDataValue(formData, 'q32_linkedinAdresi');
 										const facebookHandle = getFormDataValue(formData, 'q33_facebookAdresi');
 										const websiteFieldContent = getFormDataValue(formData, 'q48_website');
-										let goldenPagesLinkToShow: string | null = null;
-										if (websiteFieldContent && websiteFieldContent !== 'N/A' && websiteFieldContent.trim() !== '') {
-											const firmaAdiSlug = slugify(firmaAdi);
-											if (firmaAdiSlug) {
-												goldenPagesLinkToShow = `https://goldenpages.io/${firmaAdiSlug}`;
-											}
-										}
-										const hasSocialMedia = [instagramHandle, tiktokHandle, twitterHandle, linkedinHandle, facebookHandle].some(handle => handle && handle !== 'N/A' && handle.trim() !== '');
 										const googleMapHtml = getFormDataValue(formData, 'q103_googleMap');
 										const isNewlyAdded = !anyFilterActive && index < 3;
+
+// --- MODIFICATION START ---
+// 1. Always attempt to create the goldenpages.io link using firmaAdi
+										const firmaAdiSlug = slugify(firmaAdi);
+										let goldenPagesLinkToShow: string | null = null;
+										if (firmaAdiSlug) {
+											goldenPagesLinkToShow = `https://goldenpages.io/${firmaAdiSlug}`;
+										}
+
+// 2. Prepare the actual website URL from websiteFieldContent (q48_website) for the globe icon and fallback
+										let actualExternalWebsiteUrl: string | null = null;
+										if (websiteFieldContent && websiteFieldContent !== 'N/A' && websiteFieldContent.trim() !== '') {
+											if (websiteFieldContent.startsWith('http://') || websiteFieldContent.startsWith('https://')) {
+												actualExternalWebsiteUrl = websiteFieldContent;
+											} else {
+												actualExternalWebsiteUrl = `https://${websiteFieldContent}`;
+											}
+										}
+// --- MODIFICATION END ---
+
+										const hasSocialMedia = [instagramHandle, tiktokHandle, twitterHandle, linkedinHandle, facebookHandle].some(handle => handle && handle !== 'N/A' && handle.trim() !== '');
 
 										return (
 											<div key={submission.id}
@@ -524,26 +537,40 @@ export default function Home() {
 												<div className="p-6 flex-grow flex flex-col">
 													<div className="flex items-start space-x-4 mb-4">
 														{profilePicUrl ? (
-															<img src={profilePicUrl} alt={`${firmaAdi} Profil Resmi`}
-																 className="w-16 h-16 rounded-lg object-cover border-2 border-gray-200 group-hover:border-[#FCA300] transition-colors"
-																 onError={(e) => {
-																	 (e.target as HTMLImageElement).style.display = 'none';
-																 }}/>
+															<a target="_blank"
+															   href={goldenPagesLinkToShow || actualExternalWebsiteUrl || '#'}> {/* MODIFIED HREF */}
+																<img src={profilePicUrl}
+																	 alt={`${firmaAdi} Profil Resmi`}
+																	 className="w-16 h-16 rounded-lg object-cover border-2 border-gray-200 group-hover:border-[#FCA300] transition-colors"
+																	 onError={(e) => {
+																		 (e.target as HTMLImageElement).style.display = 'none';
+																	 }}/>
+															</a>
+
 														) : (
-															<div
-																className="w-16 h-16 rounded-lg bg-gray-100 flex items-center justify-center text-[#FCA300] group-hover:border-[#FCA300] border-2 border-gray-200 transition-colors placeholder-icon-container">
-																<svg xmlns="http://www.w3.org/2000/svg" fill="none"
-																	 viewBox="0 0 24 24" strokeWidth="1.5"
-																	 stroke="currentColor" className="w-8 h-8">
-																	<path strokeLinecap="round" strokeLinejoin="round"
-																		  d="M2.25 21h19.5m-18-18v18A2.25 2.25 0 0 0 4.5 21h15a2.25 2.25 0 0 0 2.25-2.25V5.25A2.25 2.25 0 0 0 19.5 3H4.5A2.25 2.25 0 0 0 2.25 5.25v.897M7.5 4.5M7.5 12a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Zm0 0v3.375c0 .621.504 1.125 1.125 1.125h2.25c.621 0 1.125-.504 1.125-1.125V12Zm-1.125-4.5h4.5m-4.5 0h4.5m-4.5 0V3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V4.5m0 0v3.375c0 .621-.504 1.125-1.125 1.125h-2.25A1.125 1.125 0 0 1 7.5 7.875V4.5m0 0h4.5M4.5 12h15M4.5 15h15M4.5 18h15"/>
-																</svg>
-															</div>
+															<a target="_blank"
+															   href={goldenPagesLinkToShow || actualExternalWebsiteUrl || '#'}> {/* MODIFIED HREF */}
+																<div
+																	className="w-16 h-16 rounded-lg bg-gray-100 flex items-center justify-center text-[#FCA300] group-hover:border-[#FCA300] border-2 border-gray-200 transition-colors placeholder-icon-container">
+																	<svg xmlns="http://www.w3.org/2000/svg" fill="none"
+																		 viewBox="0 0 24 24" strokeWidth="1.5"
+																		 stroke="currentColor" className="w-8 h-8">
+																		<path strokeLinecap="round"
+																			  strokeLinejoin="round"
+																			  d="M2.25 21h19.5m-18-18v18A2.25 2.25 0 0 0 4.5 21h15a2.25 2.25 0 0 0 2.25-2.25V5.25A2.25 2.25 0 0 0 19.5 3H4.5A2.25 2.25 0 0 0 2.25 5.25v.897M7.5 4.5M7.5 12a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Zm0 0v3.375c0 .621.504 1.125 1.125 1.125h2.25c.621 0 1.125-.504 1.125-1.125V12Zm-1.125-4.5h4.5m-4.5 0h4.5m-4.5 0V3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V4.5m0 0v3.375c0 .621-.504 1.125-1.125 1.125h-2.25A1.125 1.125 0 0 1 7.5 7.875V4.5m0 0h4.5M4.5 12h15M4.5 15h15M4.5 18h15"/>
+																	</svg>
+																</div>
+															</a>
 														)}
 														<div className="flex-1 min-w-0">
-															<span
-																className="block text-xs font-medium text-[#FCA300] uppercase tracking-wider">Firma Adı</span>
-															<p className="text-xl font-semibold text-gray-900 truncate group-hover:text-orange-600 transition-colors">{firmaAdi}</p>
+<span
+	className="block text-xs font-medium text-[#FCA300] uppercase tracking-wider">Firma Adı</span>
+															<a target="_blank"
+															   href={goldenPagesLinkToShow || actualExternalWebsiteUrl || '#'}> {/* MODIFIED HREF */}
+																<p className="text-xl font-semibold text-gray-900 truncate group-hover:text-orange-600 transition-colors">
+																	{firmaAdi}
+																</p>
+															</a>
 														</div>
 													</div>
 													<ul className="space-y-3 mb-auto">
@@ -565,6 +592,7 @@ export default function Home() {
 															href={`mailto:${email}`}
 															className="text-gray-700 hover:text-orange-500 transition-colors truncate block">{email}</a>
 														</li>)}
+														{/* This list item will now show the goldenpages.io link if firmaAdiSlug was valid */}
 														{goldenPagesLinkToShow && (<li><span
 															className="block text-xs font-medium text-gray-500 uppercase tracking-wider">Website</span><a
 															href={goldenPagesLinkToShow} target="_blank"
@@ -576,20 +604,23 @@ export default function Home() {
 														<div className="pt-4 border-t border-gray-200 mt-4">
 															<div className="flex items-center space-x-3 justify-center">
 
-
-																{goldenPagesLinkToShow && (
+																{/* --- MODIFICATION FOR GLOBE ICON --- */}
+																{actualExternalWebsiteUrl && (
 																	<div>
 																		<a
-																			href={`https://${websiteFieldContent}`}
+																			href={actualExternalWebsiteUrl}
 																			target="_blank"
 																			rel="noopener noreferrer"
 																			className="text-gray-700 hover:text-orange-500 transition-colors truncate block flex items-center gap-2"
+																			title="Website"
 																		>
-																			<img src="globe.svg" width="24" height="24" alt="Website" className="flex-shrink-0" />
+																			<img src="globe.svg" width="24" height="24"
+																				 alt="Website"
+																				 className="flex-shrink-0"/>
 																		</a>
 																	</div>
 																)}
-
+																{/* --- END MODIFICATION FOR GLOBE ICON --- */}
 
 																{instagramHandle && instagramHandle !== 'N/A' && instagramHandle.trim() !== '' && (
 																	<a href={formatSocialUrl('instagram', instagramHandle)}
